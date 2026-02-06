@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Restaurante HTTP</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="introScreen" class="intro-screen">
+        <div class="intro-card">
+            <h1>O Restaurante HTTP</h1>
+            <p class="intro-text">Esse site é uma metáfora lúdica para entender requisições HTTP como um restaurante: você é o cliente, o garçom é o HTTP e a cozinha é o servidor.</p>
+            <p class="intro-text">Explore os pedidos, veja os status e aprenda de forma simples e divertida.</p>
+            <button class="btn btn-get intro-button" onclick="enterSite()">Entrar</button>
+        </div>
+    </div>
+
+    <audio id="ambientAudio" src="Coffee Shop Sound Effects.mp3" loop autoplay></audio>
+
+    <div id="appContent" class="container" style="display:none;">
+        <header>
+            <h1>O Restaurante HTTP</h1>
+            <div class="audio-controls">
+                <button class="audio-toggle" id="audioToggle" onclick="toggleAmbientAudio()">🔊 Ambiente ligado</button>
+            </div>
+        </header>
+
+        <div class="restaurant-layout">
+            <!-- Cliente (Você) -->
+            <div class="client-area">
+                <div class="card">
+                    <h2>Você (Cliente)</h2>
+                    <p>Sentado na mesa, pronto para fazer pedidos.</p>
+                    
+                    <div class="actions">
+                        <h3>Faça seu pedido:</h3>
+                        
+                        <div class="action-group">
+                            <button class="btn btn-get" onclick="makeRequest('GET')">
+                                GET - O cardápio.
+                            </button>
+                            <p class="action-desc">Ver o cardápio</p>
+                        </div>
+
+                        <div class="action-group">
+                            <button class="btn btn-post" onclick="makeRequest('POST')">
+                                POST - Leve o pedido.
+                            </button>
+                            <p class="action-desc">Cadastrar ou enviar dados</p>
+                        </div>
+
+                        <div class="action-group">
+                            <button class="btn btn-put" onclick="makeRequest('PUT')">
+                                PUT - Muda o status.
+                            </button>
+                            <p class="action-desc">Alternar: Para Comer Aqui ⇄ Para Viagem</p>
+                        </div>
+
+                        <div class="action-group">
+                            <button class="btn btn-patch" onclick="makeRequest('PATCH')">
+                                PATCH - Troca isso.
+                            </button>
+                            <p class="action-desc">Editar parcialmente o pedido</p>
+                        </div>
+
+                        <div class="action-group">
+                            <button class="btn btn-delete" onclick="makeRequest('DELETE')">
+                                DELETE - Cancela o pedido.
+                            </button>
+                            <p class="action-desc">Apagar algo</p>
+                        </div>
+                    </div>
+
+                    <!-- Input para POST -->
+                    <div id="inputArea" class="input-area" style="display:none;">
+                        <h4>Monte seu pedido:</h4>
+                        <select id="juice">
+                            <option value="">Escolha um suco</option>
+                            <option value="Suco de Laranja">Suco de Laranja</option>
+                            <option value="Suco de Morango">Suco de Morango</option>
+                            <option value="Suco de Limão">Suco de Limão</option>
+                        </select>
+                        <select id="portion">
+                            <option value="">Escolha uma porção</option>
+                            <option value="Batata Frita">Batata Frita</option>
+                            <option value="Mandioca Frita">Mandioca Frita</option>
+                            <option value="Anéis de Cebola">Anéis de Cebola</option>
+                        </select>
+                        <select id="mainDish">
+                            <option value="">Escolha um prato principal</option>
+                            <option value="Hambúrguer">Hambúrguer</option>
+                            <option value="Pizza">Pizza</option>
+                            <option value="Macarrão">Macarrão</option>
+                        </select>
+                        <button class="btn-small" onclick="submitData()">Enviar</button>
+                        <button class="btn-small btn-cancel" onclick="cancelInput()">Cancelar</button>
+                    </div>
+
+                    <!-- Input para PUT (alternar status) -->
+                    <div id="putArea" class="input-area" style="display:none;">
+                        <h4>Qual pedido deseja mudar o status?</h4>
+                        <select id="orderToToggleStatus"></select>
+                        <button class="btn-small" onclick="submitPutData()">Alternar Status</button>
+                        <button class="btn-small btn-cancel" onclick="cancelInput()">Cancelar</button>
+                    </div>
+
+                    <!-- Input para PATCH (editar pedido) -->
+                    <div id="patchArea" class="input-area" style="display:none;">
+                        <h4>Qual pedido deseja trocar?</h4>
+                        <select id="orderToUpdate"></select>
+                        <div id="patchNewItems" style="display:none;">
+                            <h4 style="margin-top: 15px;">Trocar por:</h4>
+                            <select id="newJuice">
+                                <option value="">Escolha um suco</option>
+                                <option value="Suco de Laranja">Suco de Laranja</option>
+                                <option value="Suco de Morango">Suco de Morango</option>
+                                <option value="Suco de Limão">Suco de Limão</option>
+                            </select>
+                            <select id="newPortion">
+                                <option value="">Escolha uma porção</option>
+                                <option value="Batata Frita">Batata Frita</option>
+                                <option value="Mandioca Frita">Mandioca Frita</option>
+                                <option value="Anéis de Cebola">Anéis de Cebola</option>
+                            </select>
+                            <select id="newMainDish">
+                                <option value="">Escolha um prato principal</option>
+                                <option value="Hambúrguer">Hambúrguer</option>
+                                <option value="Pizza">Pizza</option>
+                                <option value="Macarrão">Macarrão</option>
+                            </select>
+                        </div>
+                        <button class="btn-small" onclick="submitPatchData()">Trocar</button>
+                        <button class="btn-small btn-cancel" onclick="cancelInput()">Cancelar</button>
+                    </div>
+
+                    <!-- Input para DELETE -->
+                    <div id="deleteArea" class="input-area" style="display:none;">
+                        <h4>Qual pedido deseja deletar?</h4>
+                        <select id="orderToDelete"></select>
+                        <button class="btn-small" onclick="submitDeleteData()">Deletar</button>
+                        <button class="btn-small btn-cancel" onclick="cancelInput()">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Garçom (HTTP) -->
+            <div class="waiter-area">
+                <div class="waiter" id="waiter">
+                    <div class="waiter-emoji">🚶</div>
+                    <h3 class="waiter-label">Garçom (HTTP)</h3>
+                    <div class="message-bubble" id="messageBubble"></div>
+                </div>
+                <div class="path-line"></div>
+            </div>
+
+            <!-- Servidor (Cozinha) -->
+            <div class="server-area">
+                <div class="card">
+                    <h2>Cozinha (Servidor)</h2>
+                    <p>Processando seus pedidos...</p>
+                    
+                    <div id="serverStatus" class="server-status">
+                        <p>Aguardando pedido...</p>
+                    </div>
+                    <div class="storage-area inline-storage">
+                            <h3>Dados Armazenados no Servidor:</h3>
+                            <div id="storedData" class="stored-data"></div>
+
+                    <div class="server-feedback">
+                        <div class="status-and-legend" id="responseArea" style="display:none;">
+                            <div class="status-group">
+                                <h3>Status Code</h3>
+                                <div class="status-code" id="statusCode"></div>
+                            </div>
+                            <div class="legend legend-inline">
+                                <h3>Status Codes:</h3>
+                                <div class="legend-grid">
+                                    <div class="legend-item success">
+                                        <span class="code">200 OK</span>
+                                        <span>Tudo certo!</span>
+                                    </div>
+                                    <div class="legend-item error-client">
+                                        <span class="code">404 Not Found</span>
+                                        <span>Não existe no cardápio</span>
+                                    </div>
+                                    <div class="legend-item error-client">
+                                        <span class="code">401/403</span>
+                                        <span>Proibido - Você não pode</span>
+                                    </div>
+                                    <div class="legend-item error-server">
+                                        <span class="code">500 Error</span>
+                                        <span>Explodiu a cozinha!</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dropdown-area" id="detailsArea" style="display:none;">
+                            <div class="dropdown">
+                                <button class="dropdown-toggle" id="headersToggle" onclick="toggleDropdown('headersPanel','headersToggle')" aria-expanded="false">Headers</button>
+                                <div class="dropdown-panel" id="headersPanel">
+                                    <div class="code-block" id="headers"></div>
+                                </div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="dropdown-toggle" id="bodyToggle" onclick="toggleDropdown('bodyPanel','bodyToggle')" aria-expanded="false">Body</button>
+                                <div class="dropdown-panel" id="bodyPanel">
+                                    <div class="code-block" id="body"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
